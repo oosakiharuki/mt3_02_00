@@ -454,21 +454,21 @@ Vector3 Subtract(const Vector3& v1, const Vector3& v2) {
 }
 
 Vector3 Project(const Vector3& v1, const Vector3& v2) {
-	
-	float B = ((v2.x * v2.x) + (v2.y * v2.y) + (v2.z * v2.z));
+
+	float t = (v1.x * v2.x) / ((v2.x * v2.x) + (v2.y * v2.y) + (v2.z * v2.z));
 
 	Vector3 result{};
-	result.x = ((v1.x * v2.x) * v2.x) / B;
-	result.y = ((v1.y * v2.y) * v2.y) / B;
-	result.z = ((v1.z * v2.z) * v2.z) / B;
+	result.x = t * v2.x;
+	result.y = t * v2.y;
+	result.z = t * v2.z;
 	return result;
 }
 
 Vector3 ClosestPoint(const Vector3& point, const Segment& v2) {
 	Vector3 result{};
-	result.x = point.x + ((v2.origin.x * v2.diff.x) * v2.diff.x) / ((v2.diff.x * v2.diff.x) + (v2.diff.x * v2.diff.x));
-	result.y = point.y + ((v2.origin.y * v2.diff.y) * v2.diff.y) / ((v2.diff.y * v2.diff.y) + (v2.diff.y * v2.diff.y));
-	result.z = point.z + ((v2.origin.z * v2.diff.z) * v2.diff.z) / ((v2.diff.z * v2.diff.z) + (v2.diff.z * v2.diff.z));
+	result.x = v2.origin.x + ((v2.diff.x * point.x) * point.x) / ((point.x * point.x) + (point.x * point.x));
+	result.y = v2.origin.y + ((v2.diff.y * point.y) * point.y) / ((point.y * point.y) + (point.y * point.y));
+	result.z = v2.origin.z + ((v2.diff.z * point.z) * point.z) / ((point.z * point.z) + (point.z * point.z));
 	return result;
 }
 
@@ -537,11 +537,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Novice::DrawLine((int)start.x, (int)start.y, (int)end.x, (int)end.y, WHITE);
 
 
+
+		//ImGui::Begin("window");
+		//ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
+		//ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
+
 		ImGui::InputFloat3("point", &point.x, "%.3f", ImGuiInputTextFlags_ReadOnly);
 		ImGui::InputFloat3("origin", &segment.origin.x, "%.3f", ImGuiInputTextFlags_ReadOnly);
 		ImGui::InputFloat3("diff", &segment.diff.x, "%.3f", ImGuiInputTextFlags_ReadOnly);
 		ImGui::InputFloat3("project",&project.x,"%.3f",ImGuiInputTextFlags_ReadOnly);
 
+
+		//ImGui::End();
 
 		///
 		/// ↑更新処理ここまで
