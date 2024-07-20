@@ -455,7 +455,7 @@ Vector3 Subtract(const Vector3& v1, const Vector3& v2) {
 
 Vector3 Project(const Vector3& v1, const Vector3& v2) {
 
-	float t = (v1.x * v2.x) / ((v2.x * v2.x) + (v2.y * v2.y) + (v2.z * v2.z));
+	float t = ((v1.x + v1.y + v1.z) * (v2.x + v2.y + v2.z)) / ((v2.x + v2.y + v2.z) * (v2.x + v2.y + v2.z));
 
 	Vector3 result{};
 	result.x = t * v2.x;
@@ -465,10 +465,24 @@ Vector3 Project(const Vector3& v1, const Vector3& v2) {
 }
 
 Vector3 ClosestPoint(const Vector3& point, const Segment& v2) {
+	//Vector3 result{};
+	//result.x = v2.origin.x + ((point.x * v2.diff.x) * v2.diff.x) / ((v2.diff.x * v2.diff.x) + (v2.diff.x * v2.diff.x));
+	//result.y = v2.origin.y + ((point.y * v2.diff.y) * v2.diff.y) / ((v2.diff.y * v2.diff.y) + (v2.diff.y * v2.diff.y));
+	//result.z = v2.origin.z + ((point.z * v2.diff.z) * v2.diff.z) / ((v2.diff.z * v2.diff.z) + (v2.diff.z * v2.diff.z));
+		
+	Vector3 a = { point.x - v2.origin.x,point.y - v2.origin.y,point.z - v2.origin.z };
+
+	
+	float t = (((a.x + a.y + a.z) * (v2.diff.x + v2.diff.y + v2.diff.z)) / ((v2.diff.x + v2.diff.y + v2.diff.z) * (v2.diff.x + v2.diff.y + v2.diff.z)));
+
+
 	Vector3 result{};
-	result.x = v2.origin.x + ((v2.diff.x * point.x) * point.x) / ((point.x * point.x) + (point.x * point.x));
-	result.y = v2.origin.y + ((v2.diff.y * point.y) * point.y) / ((point.y * point.y) + (point.y * point.y));
-	result.z = v2.origin.z + ((v2.diff.z * point.z) * point.z) / ((point.z * point.z) + (point.z * point.z));
+
+
+	result.x = v2.origin.x + (t * v2.diff.x);
+	result.y = v2.origin.y + (t * v2.diff.y);
+	result.z = v2.origin.z + (t * v2.diff.z);
+	
 	return result;
 }
 
@@ -498,7 +512,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Vector3 cameraPosition = { 0.0f ,0.0f,-20.0f };
 	Vector3 cameraTranslate = { 0.0f,-1.0f,-6.49f };
-	Vector3 cameraRotate = { 0.26f,0.0f,0.0f };
+	Vector3 cameraRotate = { -0.16f,0.0f,0.0f };
 
 
 
@@ -538,9 +552,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 
-		//ImGui::Begin("window");
-		//ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
-		//ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
+		ImGui::Begin("window");
+		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
+		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
 
 		ImGui::InputFloat3("point", &point.x, "%.3f", ImGuiInputTextFlags_ReadOnly);
 		ImGui::InputFloat3("origin", &segment.origin.x, "%.3f", ImGuiInputTextFlags_ReadOnly);
@@ -548,7 +562,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::InputFloat3("project",&project.x,"%.3f",ImGuiInputTextFlags_ReadOnly);
 
 
-		//ImGui::End();
+		ImGui::End();
 
 		///
 		/// ↑更新処理ここまで
