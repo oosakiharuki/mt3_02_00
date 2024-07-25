@@ -454,8 +454,8 @@ Vector3 Subtract(const Vector3& v1, const Vector3& v2) {
 }
 
 Vector3 Project(const Vector3& v1, const Vector3& v2) {
-
-	float t = ((v1.x + v1.y + v1.z) * (v2.x + v2.y + v2.z)) / ((v2.x + v2.y + v2.z) * (v2.x + v2.y + v2.z));
+	// x0.5,y1.6,z0.6
+	float t = ((v1.x  * v2.x) + (v1.y * v2.y) + (v1.z * v2.z)) / ((v2.x * v2.x) + (v2.y * v2.y) + (v2.z * v2.z));
 
 	Vector3 result{};
 	result.x = t * v2.x;
@@ -465,15 +465,10 @@ Vector3 Project(const Vector3& v1, const Vector3& v2) {
 }
 
 Vector3 ClosestPoint(const Vector3& point, const Segment& v2) {
-	//Vector3 result{};
-	//result.x = v2.origin.x + ((point.x * v2.diff.x) * v2.diff.x) / ((v2.diff.x * v2.diff.x) + (v2.diff.x * v2.diff.x));
-	//result.y = v2.origin.y + ((point.y * v2.diff.y) * v2.diff.y) / ((v2.diff.y * v2.diff.y) + (v2.diff.y * v2.diff.y));
-	//result.z = v2.origin.z + ((point.z * v2.diff.z) * v2.diff.z) / ((v2.diff.z * v2.diff.z) + (v2.diff.z * v2.diff.z));
-		
+
 	Vector3 a = { point.x - v2.origin.x,point.y - v2.origin.y,point.z - v2.origin.z };
 
-	
-	float t = (((a.x + a.y + a.z) * (v2.diff.x + v2.diff.y + v2.diff.z)) / ((v2.diff.x + v2.diff.y + v2.diff.z) * (v2.diff.x + v2.diff.y + v2.diff.z)));
+	float t = ((a.x * v2.diff.x) + (a.y * v2.diff.y) + (a.z * v2.diff.z)) / ((v2.diff.x * v2.diff.x) + (v2.diff.y * v2.diff.y) + (v2.diff.z * v2.diff.z));
 
 
 	Vector3 result{};
@@ -511,7 +506,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 	Vector3 cameraPosition = { 0.0f ,0.0f,-20.0f };
-	Vector3 cameraTranslate = { 0.0f,-1.0f,-6.49f };
+	Vector3 cameraTranslate = { 0.0f,-0.5f,-12.0f };
 	Vector3 cameraRotate = { -0.16f,0.0f,0.0f };
 
 
@@ -540,15 +535,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		DrawGrid(WorldViewProjectionMatrix, viewportMatrix);
 
-		DrawSphere(pointSphere, WorldViewProjectionMatrix, viewportMatrix, RED);
-		DrawSphere(closestPointSphere, WorldViewProjectionMatrix, viewportMatrix, BLACK);
-
 
 		Vector3 start = Transform(Transform(segment.origin, WorldViewProjectionMatrix), viewportMatrix);
 		Vector3 end = Transform(Transform(Add(segment.origin, segment.diff), WorldViewProjectionMatrix), viewportMatrix);
 
 
 		Novice::DrawLine((int)start.x, (int)start.y, (int)end.x, (int)end.y, WHITE);
+
+		DrawSphere(pointSphere, WorldViewProjectionMatrix, viewportMatrix, RED);
+		DrawSphere(closestPointSphere, WorldViewProjectionMatrix, viewportMatrix, BLACK);
 
 
 
